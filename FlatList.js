@@ -1,6 +1,7 @@
 import React from 'react'
 import {FlatList, StyleSheet, Text, TouchableOpacity, Image} from 'react-native'
 import PropTypes from 'prop-types'
+import { fetchFlag } from './api'
 
 const Row = props =>  {
   const icon = props.logo ?
@@ -23,9 +24,12 @@ const Row = props =>  {
 const FlatListCountries = props => {
 
   const renderItem = ({item}) => {
+    
+    const url = fetchFlag(item.name)
     return (
       <Row 
         {...item}
+        logo={url}
         onSelectCountry={props.onSelectCountry}
         />
       )

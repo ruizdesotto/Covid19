@@ -2,38 +2,23 @@ import React from 'react';
 import {Button, StyleSheet, Text, View } from 'react-native';
 import Constants from 'expo-constants'
 
-import { fetchCountry, fetchFlag } from '../api'
+import {connect} from 'react-redux'
+
+import { fetchCountry } from '../api'
 import FlatListCountries from '../FlatList'
 
-export default class CountryList extends React.Component{
+class CountryListScreen extends React.Component{
     state = {
-        countries: [],
         show: true,
     }
 
-    componentDidMount(){
-        this.getCountries()
-    }
+    // componentDidMount(){
+    //     this.getCountries()
+    // }
 
     getCountries = async () => {
         const countries = await fetchCountry()
         this.setState({countries}) 
-        this.getLogos()
-    }
-
-
-    getLogos = () => {
-        const listCountries = this.state.countries
-        listCountries.forEach(this.setImageinState)
-    }
-
-    setImageinState = (country, index) => {
-        url = fetchFlag(country.name)
-        this.setState((prevState) => {
-            countries = [...prevState.countries]
-            countries[index].logo = url
-            return {countries}
-        })
     }
 
     toggle = () => {
@@ -47,9 +32,9 @@ export default class CountryList extends React.Component{
                <Button title="Toggle for debugging" onPress={this.toggle} /> 
                {this.state.show && 
                <FlatListCountries 
-                    countries={this.state.countries} 
+                    countries={this.props.countries} 
                     onSelectCountry = {(country) => {this.props.navigation.navigate(
-                        'Details',
+                        'DetailsScreen',
                         {...country} )}} 
                 /> }
                {/* <FlatListCountries countries={this.state.countries} /> */}
@@ -58,6 +43,10 @@ export default class CountryList extends React.Component{
     }
 }
 
+const mapStateToProps = state => ({
+    countries: state.countriesList, 
+  })
+export default connect(mapStateToProps)(CountryListScreen)
 
 const styles = StyleSheet.create({
     container: {

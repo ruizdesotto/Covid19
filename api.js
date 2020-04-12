@@ -9,10 +9,12 @@ const IMG_TYPE = ".png"
     https://www.countryflags.io/be/shiny/32.png
 */
 let listCountryCodes = []
+
+// FORMAT 
 const processCountries = ([name, data], key) => ({key:''+key, name, data})
 const processCodes = (country) => ({name: country.name, code: country.alpha2Code})
 
-
+// GET COUNTRY COVID DATA
 export const fetchCountry = async () => {
     const request = await fetch(COVID_DATA_API)
     const allData = await request.json()
@@ -21,12 +23,14 @@ export const fetchCountry = async () => {
 }
 
 
+// GET COUNTRY CODES
 fetchCountryCodes = async () => {
     const request = await fetch(COUNTRY_API)
     const allData = await request.json()
     return allData.map(processCodes)
 }
 
+// GET URL FOR ICON FLAG
 export const fetchFlag = (refName) => {
     const match = listCountryCodes.filter(({name}) => (name===refName))
     if (match.length > 0){
