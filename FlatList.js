@@ -3,33 +3,38 @@ import {FlatList, StyleSheet, Text, TouchableOpacity, Image} from 'react-native'
 import PropTypes from 'prop-types'
 import { fetchFlag } from './api'
 
-const Row = props =>  {
-  const icon = props.logo ?
-              {uri: props.logo} :
-              require('./assets/rotodos.jpg')
+class Row extends React.PureComponent {
+  render(){
+    const {props} = this
+    const icon = props.logo ?
+                {uri: props.logo} :
+                require('./assets/rotodos.jpg')
 
-  return(
-  <TouchableOpacity 
-    style={styles.row}
-    onPress={() => props.onSelectCountry({name:props.name, data:props.data})} >
-    <Image
-        style={styles.tinyLogo}
-        resizeMode='cover'
-        source={icon}
-    />
-    <Text style={styles.text}>{props.name}</Text>  
-  </TouchableOpacity>  
-)}
+    return(
+      <TouchableOpacity 
+      style={styles.row}
+      onPress={() => props.onSelectCountry(props.id)} >
+      <Image
+      style={styles.tinyLogo}
+      resizeMode='cover'
+      source={icon}
+      />
+      <Text style={styles.text}>{props.name}</Text>  
+      </TouchableOpacity>  
+      )
+  }
+}
 
 const FlatListCountries = props => {
 
   const renderItem = ({item}) => {
-    
     const url = fetchFlag(item.name)
+
     return (
       <Row 
         {...item}
         logo={url}
+        id={item.key}
         onSelectCountry={props.onSelectCountry}
         />
       )

@@ -4,21 +4,11 @@ import Constants from 'expo-constants'
 
 import {connect} from 'react-redux'
 
-import { fetchCountry } from '../api'
 import FlatListCountries from '../FlatList'
 
 class CountryListScreen extends React.Component{
     state = {
         show: true,
-    }
-
-    // componentDidMount(){
-    //     this.getCountries()
-    // }
-
-    getCountries = async () => {
-        const countries = await fetchCountry()
-        this.setState({countries}) 
     }
 
     toggle = () => {
@@ -33,9 +23,9 @@ class CountryListScreen extends React.Component{
                {this.state.show && 
                <FlatListCountries 
                     countries={this.props.countries} 
-                    onSelectCountry = {(country) => {this.props.navigation.navigate(
+                    onSelectCountry = {(id) => {this.props.navigation.navigate(
                         'DetailsScreen',
-                        {...country} )}} 
+                        {id} )}} 
                 /> }
                {/* <FlatListCountries countries={this.state.countries} /> */}
             </View>
