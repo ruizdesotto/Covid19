@@ -1,10 +1,14 @@
 TODO file
 
-Search bar in country screen
-Settings tab with graph options
+    Settings tab with graph options
 
-Log scale
-Comparison feature
+    Comparison feature
 
-Offline icons
-icon debuggin
+    Offline icons
+    icon debuggin
+
+
+    Xaxis label
+    Round numbers : modify library class
+
+    Reducer instead of appending to list, maybe replacing list...

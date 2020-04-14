@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Switch,  StyleSheet, Text, View } from 'react-native';
 import GraphComponent from '../graphComponent'
 
 import {connect} from 'react-redux'
@@ -24,8 +24,16 @@ const BarItem = props => {
 
 class DetailsScreen extends React.Component{
 
+    state = {
+        isLog: false,
+    }
+
     _setHeading(name){
         this.props.navigation.setOptions({ title: name })
+    }
+
+    _toggleLog = () => {
+        this.setState(prevState => ({isLog: !prevState.isLog}))
     }
 
     render(){
@@ -55,8 +63,18 @@ class DetailsScreen extends React.Component{
                         prev={prevData.deaths}
                         style={COLOR_VAL.COLOR_DEAD} />
                 </View>
+                <View style={styles.barStatus}>
+                    <Switch 
+                        onValueChange={this._toggleLog}
+                        value={this.state.isLog} 
+                    />
+                    <Text>Log scale (debuggin)</Text>
+                </View>
                 <View style={styles.graphContainer}>
-                <GraphComponent data={thisCountry.data} />
+                <GraphComponent 
+                    data={thisCountry.data} 
+                    isLog={this.state.isLog}
+                    />
                 </View>
             </View>
 
