@@ -84,7 +84,7 @@ class DetailsScreen extends React.Component{
 
 
 const mapStateToProps = state => ({
-    countries: state.countriesInfo, 
+    countries: state.countriesInfo,  //[this.props.route.params.id]
   })
 export default connect(mapStateToProps)(DetailsScreen)
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import {Button, StyleSheet, TextInput, View } from 'react-native';
+import Constants from 'expo-constants';
 
 import {connect} from 'react-redux'
 
@@ -63,6 +64,7 @@ export default connect(mapStateToProps)(CountryListScreen)
 
 const styles = StyleSheet.create({
     container: {
+      paddingTop: Constants.statusBarHeight,
       flex: 1,
       backgroundColor: '#fff',
     },

@@ -10,8 +10,10 @@ import { store } from './redux/store'
 
 import CountryList from './screens/CountryListScreen'
 import Details from './screens/DetailsScreen'
+import Ranking from './screens/RankingScreen'
 
 const stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
 export default class App extends React.Component {
 
@@ -19,17 +21,39 @@ export default class App extends React.Component {
     return (
       <Provider store={store}>
         <NavigationContainer>
+          <Tab.Navigator >
+            <Tab.Screen 
+              name="CountryStack" 
+              component={CountryStack} 
+            />
+            <Tab.Screen 
+              name="RankingScreen" 
+              component={Ranking} 
+              />
+          </Tab.Navigator>
+        </NavigationContainer>
+      </Provider>
+      )
+  }
+}
+
+class CountryStack extends React.Component {
+
+  render(){
+    return (
+      <Provider store={store}>
           <stack.Navigator initialRouteName="CountryListScreen">
             <stack.Screen 
               name="CountryListScreen" 
               component={CountryList} 
+              options={{ 
+                headerShown: false }} 
               />
             <stack.Screen 
               name="DetailsScreen" 
               component={Details}
               />
           </stack.Navigator>
-        </NavigationContainer>
       </Provider>
       )
   }
