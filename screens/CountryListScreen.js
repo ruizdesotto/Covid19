@@ -34,7 +34,6 @@ class CountryListScreen extends React.Component{
     }
 
     render(){
-
         return(
             <View style={styles.container} >
                 <TextInput 
