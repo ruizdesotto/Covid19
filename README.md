@@ -1,14 +1,6 @@
-TODO file
+CovidStatus - Android application
 
-    Settings tab with graph options
+Purpose : This application is capable of displaying updated information 
+on the number of cases (confirmed, dead and recovered) for each country.
 
-    Comparison feature
-
-    Offline icons
-    icon debuggin
-
-
-    Xaxis label
-    Round numbers : modify library class
-
-    Reducer instead of appending to list, maybe replacing list...
+Credits to https://github.com/pomber/covid19 for the updated data in JSON format.

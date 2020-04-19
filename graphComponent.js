@@ -8,7 +8,7 @@ import COLOR_VAL from './colors'
 const M_VALUE = Math.pow(10,6)
 const K_VALUE = Math.pow(10,3)
 
-const FloatToString = (val) =>{
+export const FloatToString = (val) =>{
   if (val >= M_VALUE){
     return Math.floor(val/M_VALUE)+"M"
   }

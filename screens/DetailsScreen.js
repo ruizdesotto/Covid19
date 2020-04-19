@@ -5,22 +5,7 @@ import GraphComponent from '../graphComponent'
 import {connect} from 'react-redux'
 
 import COLOR_VAL from '../colors'
-
-const BarItem = props => {  
-
-    const backColor = {backgroundColor: props.style.light}
-    const textColor = {color: props.style.dark}
-
-    const percent = ((props.last-props.prev)/props.prev*100).toFixed(2)
-    return (
-    <View style={[styles.barItem, backColor]}>
-        <Text style={[styles.text, textColor]}>{props.type}</Text>
-        <Text style={[styles.text, textColor]}>{props.last}</Text>
-        <Text style={[styles.text, textColor]}>{(percent>0 ? "+": "")+percent+"%"}</Text>
-
-    </View>
-    )
-    }
+import BarItem from '../BarItem'
 
 class DetailsScreen extends React.Component{
 

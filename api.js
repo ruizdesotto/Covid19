@@ -1,3 +1,5 @@
+import {goodNames, betterNames} from './countryFixes'
+
 const COVID_DATA_API = "https://pomber.github.io/covid19/timeseries.json"
 const COUNTRY_API = "https://restcountries.eu/rest/v2/all"
 
@@ -12,14 +14,27 @@ let listCountryCodes = []
 
 // FORMAT 
 const processCountries = ([name, data], key) => ({key:''+key, name, data})
-const processCodes = (country) => ({name: country.name, code: country.alpha2Code})
+const processCodes = (country) => ({name: country.name, 
+                                    code: country.alpha2Code, 
+                                    otherName: {
+                                        nativeName: country.nativeName, 
+                                        frName: country.translations.fr, 
+                                        itName: country.translations.it
+                                    }})
+const fixNames = (country) => {
+    if (betterNames[country.name]){
+        country.name =  betterNames[country.name]
+    }
+    return {...country}
+}
 
 // GET COUNTRY COVID DATA
 export const fetchCountry = async () => {
     const request = await fetch(COVID_DATA_API)
     const allData = await request.json()
     listCountryCodes = await fetchCountryCodes()
-    return Object.entries(allData).map(processCountries)
+    const test = Object.entries(allData).map(processCountries).map(fixNames)
+    return Object.entries(allData).map(processCountries).map(fixNames)
 }
 
 
@@ -30,9 +45,20 @@ fetchCountryCodes = async () => {
     return allData.map(processCodes)
 }
 
+// JOIN BOTH JSON FILES
+const doMatch = (refName) => {
+    const match = listCountryCodes.filter(({name, otherName}) => ( name === refName || 
+                                                                   otherName.nativeName === refName ||
+                                                                   otherName.frName === refName ||
+                                                                   otherName.itName === refName ||
+                                                                   name === goodNames[refName] ))
+
+    return match
+}
+
 // GET URL FOR ICON FLAG
 export const fetchFlag = (refName) => {
-    const match = listCountryCodes.filter(({name}) => (name===refName))
+    const match = doMatch(refName)
     if (match.length > 0){
         const COUNTRY_CODE = match[0].code
         return FLAG_API+COUNTRY_CODE+FLAG_TYPE[0]+FLAG_SIZE[1]+IMG_TYPE
