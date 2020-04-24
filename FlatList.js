@@ -7,7 +7,7 @@ import {FloatToString} from './graphComponent'
 
 import COLOR_VAL from './colors'
 import BarItem from './BarItem'
-import GraphComponent from './graphComponent'
+import {GraphComponent, oneCountryReshape} from './graphComponent'
 
 
 class Row extends React.PureComponent {
@@ -17,12 +17,27 @@ class Row extends React.PureComponent {
     isLog: false,
   }
 
+  componentDidUpdate(){
+    if (this.props.extraReset){
+      this.setState({extra: false})
+    }
+  }
+
   _showExtra = () => {
+    const oldExtra = this.state.extra
     this.setState((prevState) => ({extra: !prevState.extra}))
+    if (!oldExtra){
+      this._scrollToIndex()
+    }
+    
   }
 
   _toggleLog = () => {
     this.setState(prevState => ({isLog: !prevState.isLog}))
+  }
+
+  _scrollToIndex = () => {
+    this.props.flref.scrollToIndex({animated: true, index: this.props.indx});
   }
 
   render(){
@@ -46,8 +61,16 @@ class Row extends React.PureComponent {
     const iconDown = <Icon
                     name='caretdown'
                     color='#0a0' />
+
+    const showExtra = this.state.extra && !this.props.extraReset
+
+    let datasets, xArray
+    if (showExtra){
+      const oGraph = oneCountryReshape(props.data, this.state.isLog)
+      datasets = oGraph.datasets
+      xArray = oGraph.xArray
+    }
     
-    // TODO FORMAT: COLORS, NUMBER, SYMBOL IF UP OR DOWN AND PERCENTAGE
     return(
       <View>
       <TouchableOpacity 
@@ -59,13 +82,13 @@ class Row extends React.PureComponent {
               resizeMode='cover'
               source={icon}
             />
-            <Text style={styles.text}>{this.state.extra ? 
+            <Text style={styles.text}>{showExtra ? 
                                         props.name : 
                                         (props.name.length > 15 ? 
                                             props.name.slice(0,15)+"..." :
                                             props.name ) }</Text> 
           </View>
-          {this.state.extra || 
+          {showExtra || 
           <View style={styles.rowNumbers}>
             <Text style={[styles.text, 
                           {flex:1, 
@@ -87,7 +110,7 @@ class Row extends React.PureComponent {
             {threeFlags[2] ? iconUp : iconDown}
           </View>}
         </View>
-      {this.state.extra && 
+      {showExtra && 
       <View style={styles.barStatus}>
       <BarItem 
           type="Confirmed" 
@@ -106,7 +129,7 @@ class Row extends React.PureComponent {
           style={COLOR_VAL.COLOR_DEAD} />
       </View>} 
       </TouchableOpacity> 
-      {this.state.extra && 
+      {showExtra && 
       <View>
       <View style={styles.switch}>
         <Text style={styles.switchText}>Log scale</Text>
@@ -117,7 +140,8 @@ class Row extends React.PureComponent {
       </View>
       <View style={styles.graphContainer}>
       <GraphComponent 
-          data={props.data} 
+          datasets={datasets} 
+          xArray={xArray}
           isLog={this.state.isLog} 
           />
       </View> 
@@ -129,21 +153,25 @@ class Row extends React.PureComponent {
 
 class FlatListCountries extends React.Component {
 
-  renderItem = ({item}) => {
+  renderItem = ({item, index}) => {
     const url = fetchFlag(item.name)
-
     return (
       <Row 
         {...item}
         logo={url}
         id={item.key}
+        indx={index}
+        flref={this.flatListRef}
+        extraReset={this.props.extraReset}
         />
       );
   }
 
   render(){
     return(
-      <FlatList renderItem={this.renderItem} data={this.props.countries} />
+      <FlatList renderItem={this.renderItem} data={this.props.countries}
+                ref={(ref) => { this.flatListRef = ref; }}
+                extraData={this.props.extraReset}/>
     )
   }
 }
@@ -177,6 +205,7 @@ const styles = StyleSheet.create({
   tinyLogo: {
     width: 24,
     height: 24,
+    marginRight: 5,
   },
   barStatus: {
     flexDirection: 'row',

@@ -16,6 +16,8 @@ let listCountryCodes = []
 const processCountries = ([name, data], key) => ({key:''+key, name, data})
 const processCodes = (country) => ({name: country.name, 
                                     code: country.alpha2Code, 
+                                    population: country.population, 
+                                    region: country.region,
                                     otherName: {
                                         nativeName: country.nativeName, 
                                         frName: country.translations.fr, 
@@ -33,8 +35,9 @@ export const fetchCountry = async () => {
     const request = await fetch(COVID_DATA_API)
     const allData = await request.json()
     listCountryCodes = await fetchCountryCodes()
-    const test = Object.entries(allData).map(processCountries).map(fixNames)
-    return Object.entries(allData).map(processCountries).map(fixNames)
+    return Object.entries(allData)
+                    .map(processCountries)
+                    .map(fixNames)
 }
 
 
@@ -46,7 +49,7 @@ fetchCountryCodes = async () => {
 }
 
 // JOIN BOTH JSON FILES
-const doMatch = (refName) => {
+export const doMatch = (refName) => {
     const match = listCountryCodes.filter(({name, otherName}) => ( name === refName || 
                                                                    otherName.nativeName === refName ||
                                                                    otherName.frName === refName ||

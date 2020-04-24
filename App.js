@@ -1,5 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Entypo'
+
+
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -10,7 +13,7 @@ import { store } from './redux/store'
 
 import CountryList from './screens/CountryListScreen'
 import Details from './screens/DetailsScreen'
-import Ranking from './screens/RankingScreen'
+import Comparison from './screens/ComparisonScreen'
 
 const stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -21,14 +24,27 @@ export default class App extends React.Component {
     return (
       <Provider store={store}>
         <NavigationContainer>
-          <Tab.Navigator >
+          <Tab.Navigator 
+            screenOptions={({ route }) => ({
+              tabBarIcon: ({ focused, color, size }) => {
+                let iconName;
+                if (route.name === 'Countries') {
+                  iconName = "list";
+                } else if (route.name === 'Comparison') {
+                  iconName = 'line-graph';
+                }
+                // You can return any component that you like here!
+                return <Ionicons name={iconName} size={size} color={color} />;
+              },
+            })}>
             <Tab.Screen 
-              name="CountryStack" 
+              name="Countries" 
               component={CountryStack} 
+              
             />
             <Tab.Screen 
-              name="RankingScreen" 
-              component={Ranking} 
+              name="Comparison" 
+              component={Comparison} 
               />
           </Tab.Navigator>
         </NavigationContainer>

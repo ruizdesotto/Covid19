@@ -8,15 +8,20 @@ import COLOR_VAL from './colors'
 const M_VALUE = Math.pow(10,6)
 const K_VALUE = Math.pow(10,3)
 
+const DOT_INTERVAL = 5
+
 export const FloatToString = (val) =>{
   if (val >= M_VALUE){
     return Math.floor(val/M_VALUE)+"M"
   }
-  else if((val >= K_VALUE)) {
+  else if (val >= K_VALUE) {
     return Math.floor(val/K_VALUE)+"k"
   }
-  else{
+  else if (val >= 1 || val === 0){
     return Math.floor(val)+""
+  }
+  else {
+    return FloatToString(val*1000)
   }
 }
 
@@ -36,27 +41,20 @@ const formatYLabel = (isLog) => (val) => {
   }
 }
 
-const GraphComponent = (props) => {
+const reshapeCountryType = (data, type, isLog) => {
+  const TotalPoints = data.length
+  return data.map((item) => (item[type]))
+             .filter((_val, indx) => (!(indx%DOT_INTERVAL) || indx===(TotalPoints-1)))
+             .map((val) => (isLog ? myLog(val) : val) )
+}
 
-    const {isLog, data} = props
+export const oneCountryReshape = (data, isLog) => {
 
-    const reshapeData = (data, type) => {
-      return data.map((item) => (item[type]))
-                 .filter((_val, indx) => (!(indx%DotInterval) || indx===(TotalPoints-1)))
-                 .map((val) => (isLog ? myLog(val) : val) )
-    }
+    const confArray = reshapeCountryType(data, "confirmed", isLog)
+    const recoArray = reshapeCountryType(data, "recovered", isLog)
+    const deadArray = reshapeCountryType(data, "deaths", isLog)
 
-    const TotalPoints = data.length
-    const DotInterval = 5;
-
-    const confArray = reshapeData(data, "confirmed")
-    const recoArray = reshapeData(data, "recovered")
-    const deadArray = reshapeData(data, "deaths")
-
-    // TODO
     const dateArray = data.map(({date}) => (date))
-
-    const NbPoints = confArray.length;
 
     const xArray = [] || dateArray;
 
@@ -72,7 +70,24 @@ const GraphComponent = (props) => {
                       },
                      ]
 
-    
+    return {datasets, xArray}
+}
+
+export const fewCountriesReshape = (countries, type, isLog) => {
+  const datasets = countries.map((element, index) => ({
+    data: reshapeCountryType(element.data, type, isLog).map((e) => (e/element.population)), 
+    color: (opacity = 1) => COLOR_VAL.COLOR_ARRAY[index].dark+Math.floor(opacity*255).toString(16),
+  }));
+
+  const xArray = [];
+  return {datasets, xArray}
+}
+
+export const GraphComponent = (props) => {
+
+    const {isLog, datasets, xArray, legend} = props
+
+    NbPoints = datasets[0].data.length
 
     const xDimension = Dimensions.get('window').width - 16
     const yDimension = xDimension*0.7
@@ -82,6 +97,7 @@ const GraphComponent = (props) => {
         data={{
           labels: xArray,
           datasets: datasets,
+          legend: legend
         }}
         formatYLabel={formatYLabel(isLog)}
         width={xDimension}
@@ -102,4 +118,3 @@ const GraphComponent = (props) => {
     )
 }
 
-export default GraphComponent
